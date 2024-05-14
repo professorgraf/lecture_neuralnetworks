@@ -76,7 +76,7 @@ class Neuron:
         for j in range(0, len(self.in_neurons)):
             val = self.in_neurons[j].value()
             if val != 0.0:
-                self.weights[j] += adaption_value * val
+                self.weights[j] += adaption_value
             self.in_neurons[j].backpropagation_error(adaption_value)
 
     def value(self):
@@ -113,13 +113,16 @@ class NeuralNetwork:
     # example: nn = NeuralNetwork(3, [4, 2])
     #          --> creates fully connected nn with 3 inputs and 2 output neurons
     #          --> adds another "hidden" layer with 4 elements
-    def __init__(self, no_inputs, layer_specs=None, alpha=0.2, activation_class=Heaviside):
+    #          alpha is the regularization parameter
+    #          epsilon is the learning rate
+    def __init__(self, no_inputs, layer_specs=None, alpha=0.00001, epsilon=0.2, activation_class=Heaviside):
         if layer_specs is None:
             layer_specs = [1]
         self.n_in = no_inputs
         self.n_out = layer_specs[len(layer_specs)-1]
         self.n_layers = 1 + len(layer_specs)
         self.alpha = alpha
+        self.epsilon = epsilon
 
         self.layers = []
         for j in range(0, self.n_layers):
@@ -148,9 +151,13 @@ class NeuralNetwork:
 
         error = 0.0
         # do backpropagation
+
+        sum_weight = self.get_squared_weight_sum() # for regularization
+
         for j in range(0, len(results)):
             diffs[j] = labels[j] - results[j]
-            self.layers[len(self.layers)-1][j].backpropagation_error(self.alpha * diffs[j])
+            diffs_regularized = diffs[j] + self.alpha * sum_weight
+            self.layers[len(self.layers)-1][j].backpropagation_error(self.epsilon * diffs_regularized )
             error += math.fabs(diffs[j])
         return error
 
@@ -176,6 +183,13 @@ class NeuralNetwork:
             results.append(self.layers[last_layer][i].value())
         return results
 
+    def get_squared_weight_sum(self):
+        sum = 0.0
+        for k in range(1, len(self.layers)):
+            for j in range(0, len(self.layers[k])):
+                for i in range(0, len(self.layers[k][j].weights)):
+                    sum += self.layers[k][j].weights[i]**2
+        return sum
 
 class PerceptronOrNetwork(NeuralNetwork):
     def __init__(self, no_inputs=2):
