@@ -225,7 +225,7 @@ class NNDemonstrator:
         self.clear_network()
         self.network = neuron.NeuralNetwork( len(self.training_data[0]),
                                              layer_specs=self.layer_specs,
-                                             activation_class=neuron.ReLU, alpha=0.0000001, epsilon=0.025)
+                                             activation_class=neuron.WeakReLU, alpha=0.0009, epsilon=0.0025)
         self.network.layers[3][0].activation = neuron.Heaviside()
         self.network.feed_forward(self.test_inputs)
         self.draw_network()
