@@ -62,7 +62,7 @@ class Neuron:
         self.out_neurons.append(neuron)
 
         neuron.in_neurons.append(self)
-        neuron.weights.append(random.random() * 2 - 1)
+        neuron.weights.append((random.random() * 2 - 1)/100)
 
         # would be linking this neuron to next neuron (given as parameter)
         #neuron.out_neurons.append(self)
