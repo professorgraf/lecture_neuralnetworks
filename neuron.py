@@ -1,3 +1,8 @@
+##
+# (c) 2024 Prof. Dr. sc. hum. Markus Graf
+#
+# base classes for neural network simulating app
+#
 
 import random
 import math

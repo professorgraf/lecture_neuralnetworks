@@ -1,3 +1,9 @@
+##
+# (c) 2024 Prof. Dr. sc. hum. Markus Graf
+#
+# neural network simulating app - tkinter GUI for the simulator
+#
+
 import random
 import math
 import tkinter as tk

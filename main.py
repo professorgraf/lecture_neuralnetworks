@@ -1,3 +1,8 @@
+##
+# (c) 2024 Prof. Dr. sc. hum. Markus Graf
+#
+# neural network simulating app - startup function
+#
 
 from demo import NNDemonstrator
 
