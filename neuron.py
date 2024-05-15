@@ -66,15 +66,11 @@ class Neuron:
         self.text_item = None
 
     def link_to(self, neuron):
+        # link from myself to neuron (forward linking), one of the in_neuron of the "neuron" is me
         self.out_neurons.append(neuron)
 
         neuron.in_neurons.append(self)
-        neuron.weights.append((random.random() * 2 - 1)/10)
-
-        # would be linking this neuron to next neuron (given as parameter)
-        #neuron.out_neurons.append(self)
-        #self.in_neurons.append(neuron)
-        #self.weights.append(random.random() * 2 - 1)
+        neuron.weights.append((random.random() * 2 - 1))
 
     def invalidate(self):
         self.invalid = True
@@ -84,7 +80,7 @@ class Neuron:
             val = self.in_neurons[j].value()
             if val != 0.0:
                 if use_pseudo_gradient:
-                    self.weights[j] += adaption_value * val # * math.fabs(val-self.value()+0.00001)
+                    self.weights[j] += adaption_value * val     # * math.fabs(val-self.value()+0.00001)
                 else:
                     self.weights[j] += adaption_value
             self.in_neurons[j].backpropagation_error(adaption_value, use_pseudo_gradient)
