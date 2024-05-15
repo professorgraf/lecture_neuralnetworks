@@ -21,6 +21,9 @@ class NNDemonstrator:
         self.description = tk.StringVar()
         self.description.set("Demonstrating Perceptron")
 
+        self.ed_alpha = tk.DoubleVar(value=0.00001)
+        self.ed_epsilon = tk.DoubleVar(value=0.2)
+
         #self.photo = decode_image(icon_image)
         #self.window.iconphoto(False, self.photo)
 
@@ -40,6 +43,7 @@ class NNDemonstrator:
 
         self.test_inputs = [1, 0, 1]
         self.test_index = 0
+
         self.layer_specs = [1]
         self.network = neuron.NeuralNetwork( len(self.training_data[0]), layer_specs=self.layer_specs )
         self.network.feed_forward(self.test_inputs)
@@ -144,7 +148,12 @@ class NNDemonstrator:
 
         self.window.grid_columnconfigure(0, weight=1)
 
-        tk.Label(tab_params, text="TOOO - please add data/labels, parameters, learning rate and stuff in here").grid(column=0, row=0, sticky='NWE')
+        tk.Label(tab_params, text="Regularization (alpha): ").grid(column=0, row=0, sticky='NW')
+        ed_alpha = tk.Entry(tab_params, textvariable=self.ed_alpha)
+        ed_alpha.grid(column=1, row=0, sticky='NWE')
+        tk.Label(tab_params, text="Learning Rate (epsilon): ").grid(column=0, row=1, sticky='NW')
+        ed_epsilon = tk.Entry(tab_params, textvariable=self.ed_epsilon)
+        ed_epsilon.grid(column=1, row=1, sticky='NWE')
 
         self.canvas = tk.Canvas(tab_demo, width=400, height=400, bg="white")
         self.canvas.grid(column=0, row=0, columnspan=6, sticky='NWSE')
@@ -225,7 +234,8 @@ class NNDemonstrator:
         self.clear_network()
         self.network = neuron.NeuralNetwork( len(self.training_data[0]),
                                              layer_specs=self.layer_specs,
-                                             activation_class=neuron.WeakReLU, alpha=0.0009, epsilon=0.0025)
+                                             activation_class=neuron.WeakReLU,
+                                             alpha=self.ed_alpha.get(), epsilon=self.ed_epsilon.get())
         self.network.layers[3][0].activation = neuron.Heaviside()
         self.network.feed_forward(self.test_inputs)
         self.draw_network()

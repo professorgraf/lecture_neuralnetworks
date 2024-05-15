@@ -48,7 +48,9 @@ class TanH(Activation):
 
 
 class Neuron:
-    def __init__(self, activation_class=ReLU):
+    def __init__(self, activation_class=None):
+        if activation_class is None:
+            activation_class = ReLU
         self.in_neurons = []
         self.out_neurons = []
         self.weights = []
@@ -62,7 +64,7 @@ class Neuron:
         self.out_neurons.append(neuron)
 
         neuron.in_neurons.append(self)
-        neuron.weights.append((random.random() * 2 - 1)/100)
+        neuron.weights.append((random.random() * 2 - 1)/10)
 
         # would be linking this neuron to next neuron (given as parameter)
         #neuron.out_neurons.append(self)
@@ -72,12 +74,15 @@ class Neuron:
     def invalidate(self):
         self.invalid = True
 
-    def backpropagation_error(self, adaption_value):
+    def backpropagation_error(self, adaption_value, use_pseudo_gradient=False):
         for j in range(0, len(self.in_neurons)):
             val = self.in_neurons[j].value()
             if val != 0.0:
-                self.weights[j] += adaption_value
-            self.in_neurons[j].backpropagation_error(adaption_value)
+                if use_pseudo_gradient:
+                    self.weights[j] += adaption_value * val # * math.fabs(val-self.value()+0.00001)
+                else:
+                    self.weights[j] += adaption_value
+            self.in_neurons[j].backpropagation_error(adaption_value, use_pseudo_gradient)
 
     def value(self):
         if self.invalid:
@@ -100,7 +105,7 @@ class InputNeuron(Neuron):
     def set(self, value):
         self.v = value
 
-    def backpropagation_error(self, adaption_value):
+    def backpropagation_error(self, adaption_value, use_pseudo_gradient=False):
         # do nothing
         pass
 
@@ -152,12 +157,17 @@ class NeuralNetwork:
         error = 0.0
         # do backpropagation
 
-        sum_weight = self.get_squared_weight_sum() # for regularization
+        sum_weight = self.get_squared_weight_sum()      # for regularization
+        sum_weight = 0
 
         for j in range(0, len(results)):
             diffs[j] = labels[j] - results[j]
-            diffs_regularized = diffs[j] + self.alpha * sum_weight
-            self.layers[len(self.layers)-1][j].backpropagation_error(self.epsilon * diffs_regularized )
+            if diffs[j] < 0:
+                diffs_regularized = diffs[j] - self.alpha * sum_weight
+            else:
+                diffs_regularized = diffs[j] + self.alpha * sum_weight
+            self.layers[len(self.layers)-1][j].backpropagation_error(self.epsilon * diffs_regularized,
+                                                                     len(self.layers)>2 )
             error += math.fabs(diffs[j])
         return error
 
