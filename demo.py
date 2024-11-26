@@ -97,10 +97,12 @@ class NNDemonstrator:
                 if j == 0:
                     n.item = self.canvas.create_rectangle(x, y, x + 50, y + 50,
                                                           fill="green" if n.is_active() else "red")
-                    n.text_item = self.canvas.create_text(x+25, y+25, text="{:.2f}".format(n.value()), width=40, fill="black")
+                    n.text_item = self.canvas.create_text(x+25, y+25, text="{:.2f}".format(n.value()), width=40,
+                                                          fill="black" if n.is_active() else "white")
                 else:
                     n.item = self.canvas.create_oval( x, y, x+50, y+50, fill="green" if n.is_active() else "red")
-                    n.text_item = self.canvas.create_text(x+25, y+25, text="{:.2f}".format(n.value()), width=40, fill="black")
+                    n.text_item = self.canvas.create_text(x+25, y+25, text="{:.2f}".format(n.value()), width=40,
+                                                          fill="black" if n.is_active() else "white")
                     for k in range(0, len(n.in_neurons)):
                         self.draw_weight(n.in_neurons[k], n, n.weights[k])
 
