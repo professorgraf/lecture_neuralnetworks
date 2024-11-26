@@ -223,7 +223,8 @@ class NNDemonstrator:
         self.clear_network()
         self.network = neuron.NeuralNetwork( len(self.training_data[0]),
                                              layer_specs=self.layer_specs,
-                                             activation_class=neuron.WeakReLU)
+                                             activation_class=neuron.WeakReLU,
+                                             alpha=self.ed_alpha.get(), epsilon=self.ed_epsilon.get())
         self.network.feed_forward(self.test_inputs)
         self.network.layers[1][0].weights = [1, -1]
         self.network.layers[1][1].weights = [-1, 1]
@@ -237,14 +238,14 @@ class NNDemonstrator:
         self.training_labels = [[0], [1], [1], [0]]
 
         self.test_inputs = self.training_data[3]
-        self.layer_specs = [2, 3, 1]
+        self.layer_specs = [5, 3, 1]
 
         self.clear_network()
         self.network = neuron.NeuralNetwork( len(self.training_data[0]),
                                              layer_specs=self.layer_specs,
                                              activation_class=neuron.WeakReLU,
                                              alpha=self.ed_alpha.get(), epsilon=self.ed_epsilon.get())
-        self.network.layers[3][0].activation = neuron.Heaviside()
+        self.network.layers[len(self.layer_specs)][0].activation = neuron.Heaviside()
         self.network.feed_forward(self.test_inputs)
         self.draw_network()
 
